@@ -3,6 +3,7 @@ const bcrypt = require('bcrypt')
 const User = require('../models/User')
 const {sendResponseError} = require('../middleware/middleware')
 const {checkPassword, newToken} = require('../utils/utility.function')
+const updateUserIP = require('./utils/updateUserIP')
 
 const signUpUser = async (req, res) => {
   const {email, fullName, password} = req.body
@@ -28,12 +29,23 @@ const signInUser = async (req, res) => {
       sendResponseError(400, 'You have to Sign up first !', res)
     }
 
-    const same = await checkPassword(password, user.password)
-    if (same) {
-      let token = newToken(user)
-      res.status(200).send({status: 'ok', token})
-      return
-    }
+      const same = await checkPassword(password, user.password)
+      if (same) {
+        let user_id = user._id;
+
+        const ipAddress = req.ip || req.headers["x-forwarded-for"];
+        console.log("User ID:", user_id);
+console.log("IP Address:", ipAddress);
+
+
+
+        await updateUserIP(user_id, ipAddress);
+
+        let token = newToken(user)
+
+        res.status(200).send({status: 'ok', token, user_id, ipAddress})
+        return
+      }
     sendResponseError(400, 'InValid password !', res)
   } catch (err) {
     console.log('EROR', err)

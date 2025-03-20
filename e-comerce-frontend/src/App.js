@@ -1,6 +1,6 @@
 import './App.css'
 import {useEffect, useState} from 'react'
-import {BrowserRouter as Router, Switch, Route} from 'react-router-dom'
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 
 // Components
 import Navbar from './components/Navbar'
@@ -16,6 +16,11 @@ import SignIn from './screens/SignIn'
 import {useDispatch} from 'react-redux'
 import {fetchCart} from './redux/actions/cartActions'
 import {setUserDeatils} from './redux/actions/userAction'
+import Dashboard from "./components/Dashboard";
+import Home from "./pages/Home";
+import Reviews from "./dashboard/reviews";
+import Approved from "./dashboard/approved";
+import BadReviews from "./dashboard/badreview";
 
 function App() {
   const [sideToggle, setSideToggle] = useState(false)
@@ -34,11 +39,19 @@ function App() {
 
       <main className="app">
         <Switch>
+          
+          <Route exact path="/dashboard" component={Home} />
+          <Route exact path="/reviews" component={Reviews} />
+          <Route exact path="/approved" component={Approved} />
+          <Route exact path="/flagged" component={BadReviews} />
+
           <Route exact path="/" component={HomeScreen} />
+          <Route exact path="/dashboard" component={Dashboard} />
           <Route exact path="/product/:id" component={ProductScreen} />
           <Route exact path="/cart" component={CartScreen} />
           <Route exact path="/signup" component={SignUp} />
           <Route exact path="/signin" component={SignIn} />
+          
         </Switch>
       </main>
     </Router>
