@@ -7,7 +7,32 @@ const mongoose = require('mongoose');
 const rateLimit = require('express-rate-limit'); // For limiting review requests
 const BlacklistedIP = require('../models/BlacklistedIP'); // New schema for blacklisted IPs
 
-const spamWords = ["scam", "fraud", "fake", "untrustworthy", "spammy"];
+const spamWords = [
+  "scam", "fraud", "fake", "untrustworthy", "spammy",
+  "lottery", "win", "winner", "prize", "jackpot",
+  "congratulations", "free", "bonus", "giveaway", "reward",
+  "limited", "urgent", "exclusive", "act now", "click here",
+  "money", "cash", "rich", "millionaire", "investment",
+  "guarantee", "risk-free", "easy money", "no risk", "promise",
+  "debt", "credit", "loan", "mortgage", "refinance",
+  "discount", "offer", "cheap", "bargain", "lowest price",
+  "miracle", "cure", "treatment", "solution", "secret",
+  "work from home", "be your own boss", "make money fast", "instant income", "profit",
+  "viagra", "cialis", "pills", "medication", "prescription",
+  "insurance", "policy", "claim", "compensation", "settlement",
+  "bank", "account", "wire transfer", "Western Union", "PayPal",
+  "password", "verify", "confirm", "update", "security",
+  "Nigeria", "prince", "inheritance", "funds", "transfer",
+  "casino", "betting", "gambling", "poker", "sportsbook",
+  "escort", "dating", "singles", "adult", "XXX",
+  "free trial", "act now", "special offer", "limited time", "apply now",
+  "bitcoins", "crypto", "forex", "investment opportunity", "binary options",
+  "increase traffic", "SEO services", "guaranteed results", "marketing campaign", "brand promotion",
+  "unsubscribe", "opt-out", "remove me", "stop emails", "don't miss out",
+  "hack", "crack", "exploit", "cheat", "spyware",
+  "job offer", "remote work", "salary", "part-time", "extra income",
+  "survey", "get paid", "mystery shopper", "compensation", "earn now"
+];
 
 const reviewLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
@@ -16,8 +41,8 @@ const reviewLimiter = rateLimit({
 });
 
 // Route to create a review
-// router.post('/', reviewLimiter, async (req, res) => {
-  router.post('/', reviewLimiter, async (req, res) => {
+router.post('/', reviewLimiter, async (req, res) => {
+  // router.post('/', reviewLimiter, async (req, res) => {
   let { productId, rating, comment, user,ipAddress  } = req.body; // userId must be sent in the request
 
   try {

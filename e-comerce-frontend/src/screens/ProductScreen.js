@@ -9,6 +9,7 @@ import { addToCart } from '../redux/actions/cartActions'
 
 // reCAPTCHA
 import ReCAPTCHA from 'react-google-recaptcha'
+import ReviewsSection from './ReviewsSection'
 
 const ProductScreen = ({ match, history }) => {
   const [qty, setQty] = useState(1)
@@ -121,56 +122,60 @@ const ProductScreen = ({ match, history }) => {
     setCaptchaValue(value)
   }
 
-  return (
-    <div className="productscreen">
-      {loading ? (
-        <h2>Loading...</h2>
-      ) : error ? (
-        <h2>{error}</h2>
-      ) : (
-        <>
-          <div className="productscreen__left">
-            <div className="left__image">
-              <img src={product.imageUrl} alt={product.name} />
-            </div>
-            <div className="left__info">
-              <p className="left__name">{product.name}</p>
-              <p>Price: ${product.price}</p>
-              <p>Description: {product.description}</p>
-            </div>
-          </div>
-          <div className="productscreen__right">
-            <div className="right__info">
-              <p>
-                Price: <span>${product.price}</span>
-              </p>
-              <p>
-                Status: <span>{product.countInStock > 0 ? 'In Stock' : 'Out of Stock'}</span>
-              </p>
-              <p>
-                Qty
-                <select value={qty} onChange={e => setQty(e.target.value)}>
-                  {[...Array(product.countInStock).keys()].map(x => (
-                    <option key={x + 1} value={x + 1}>{x + 1}</option>
-                  ))}
-                </select>
-              </p>
-              <p>
-                <button type="button" onClick={addToCartHandler}>Add To Cart</button>
-              </p>
-            </div>
-          </div>
+// Inside the ProductScreen component
 
-          {/* Review Submission Section */}
-          <div className="productscreen__right">
-            <div className="right__info" style={{ width: "auto" }}>
-              {success ? (
-                // ✅ Show success message if the review was submitted
-                <div style={{ color: "green", fontWeight: "bold", marginTop: "10px", width: "300px", textAlign: "center", padding: "20px" }}>
-                  Review submitted successfully!
-                </div>
-              ) : (
-                // ✅ Show review form only if success is not set
+// Check if the user is logged in
+const isLoggedIn = user.userInfo && user.userInfo.isLogin;
+
+return (
+  <div className="productscreen">
+    {loading ? (
+      <h2>Loading...</h2>
+    ) : error ? (
+      <h2>{error}</h2>
+    ) : (
+      <>
+        <div className="productscreen__left">
+          <div className="left__image">
+            <img src={product.imageUrl} alt={product.name} />
+          </div>
+          <div className="left__info">
+            <p className="left__name">{product.name}</p>
+            <p>Price: ${product.price}</p>
+            <p>Description: {product.description}</p>
+          </div>
+        </div>
+        <div className="productscreen__right">
+          <div className="right__info">
+            <p>
+              Price: <span>${product.price}</span>
+            </p>
+            <p>
+              Status: <span>{product.countInStock > 0 ? 'In Stock' : 'Out of Stock'}</span>
+            </p>
+            <p>
+              Qty
+              <select value={qty} onChange={e => setQty(e.target.value)}>
+                {[...Array(product.countInStock).keys()].map(x => (
+                  <option key={x + 1} value={x + 1}>{x + 1}</option>
+                ))}
+              </select>
+            </p>
+            <p>
+              <button type="button" onClick={addToCartHandler}>Add To Cart</button>
+            </p>
+          </div>
+        </div>
+
+        {/* Review Submission Section */}
+        <div className="productscreen__right">
+          <div className="right__info" style={{ width: "auto" }}>
+            {success ? (
+              <div style={{ color: "green", fontWeight: "bold", marginTop: "10px", width: "300px", textAlign: "center", padding: "20px" }}>
+                Review submitted successfully!
+              </div>
+            ) : (
+              isLoggedIn && ( // Only show the review form if the user is logged in
                 <>
                   <p>
                     <h3>Add a Review</h3>
@@ -223,44 +228,21 @@ const ProductScreen = ({ match, history }) => {
                     </button>
                   </p>
                 </>
-              )}
-            </div>
+              )
+            )}
           </div>
+        </div>
 
-          {/* Reviews Section */}
-          <div className="productscreen__reviews">
-            <h3>Customer Reviews</h3>
-            {reviews.length === 0 ? (
-              <p>No reviews available.</p>
-            ) : (
-              <div className="reviews-list">
-                {reviews.map((review) => (
-                  <div key={review._id} className="review">
-                    <div className="review-header">
-                      <div className="review-rating">
-                        {[1, 2, 3, 4, 5].map((star) => (
-                          <FaStar
-                            key={star}
-                            size={20}
-                            color={star <= review.rating ? "#ffc107" : "#e4e5e9"}
-                          />
-                        ))}
-                      </div>
-                      <div className="review-author">
-                        <p>{review.user.fullName}</p>
-                      </div>
-                    </div>
-                    <p className="review-comment">{review.comment}</p>
-                  </div>
-                ))}
-              </div>
-            )}        
-          </div>
+        {/* Reviews Section */}
+        <div className="productscreen__reviews">
+          <ReviewsSection reviews={reviews}/>
+        </div>
 
-        </>
-      )}
-    </div>
-  )
+      </>
+    )}
+  </div>
+)
+
 }                                           
 
 export default ProductScreen
